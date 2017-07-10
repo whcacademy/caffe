@@ -670,14 +670,6 @@ message DataParameter {
   // Prefetch queue (Increase if data feeding bandwidth varies, within the
   // limit of device memory for GPU training)
   optional uint32 prefetch = 10 [default = 4];
-
-
-  // modified for random access cursor
-  optional bool use_random_access = 12 [default = false];
-  // keys for customized learning sequence file, same with file for preparing lmdb
-  // now only support lmdb database !!!
-  optional string key_file_name = 11;
-  
 }
 
 message DropoutParameter {

@@ -2,9 +2,9 @@
 #include <opencv2/core/core.hpp>
 #endif  // USE_OPENCV
 #include <stdint.h>
-
+#include "caffe/util/db_lmdb.hpp"
 #include <vector>
-
+#include <string>
 #include "caffe/data_transformer.hpp"
 #include "caffe/layers/data_layer.hpp"
 #include "caffe/util/benchmark.hpp"
@@ -17,7 +17,15 @@ DataLayer<Dtype>::DataLayer(const LayerParameter& param)
     offset_() {
   db_.reset(db::GetDB(param.data_param().backend()));
   db_->Open(param.data_param().source(), db::READ);
-  cursor_.reset(db_->NewCursor());
+  if (param.data_param().use_random_access()) {
+    printf("construct use_random_access\n");
+    cursor_.reset(boost::dynamic_pointer_cast<db::LMDB>(db_)->
+            NewRandomAccessCursor(param.data_param().key_file_name()));
+
+  }else{
+    cursor_.reset(db_->NewCursor());
+  }
+  printf("finish\n");
 }
 
 template <typename Dtype>

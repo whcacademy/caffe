@@ -44,6 +44,15 @@ LMDBCursor* LMDB::NewCursor() {
   return new LMDBCursor(mdb_txn, mdb_cursor);
 }
 
+RandomAccessLMDBCursor* LMDB::NewRandomAccessCursor(std::string file_name) {
+  MDB_txn* mdb_txn;
+  MDB_cursor* mdb_cursor;
+  MDB_CHECK(mdb_txn_begin(mdb_env_, NULL, MDB_RDONLY, &mdb_txn));
+  MDB_CHECK(mdb_dbi_open(mdb_txn, NULL, 0, &mdb_dbi_));
+  MDB_CHECK(mdb_cursor_open(mdb_txn, mdb_dbi_, &mdb_cursor));
+  return new RandomAccessLMDBCursor(mdb_txn, mdb_cursor, file_name);
+}
+
 LMDBTransaction* LMDB::NewTransaction() {
   return new LMDBTransaction(mdb_env_);
 }
